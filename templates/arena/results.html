@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Результати: {{ round.topic }} — Meme Arena{% endblock %}
+{% block content %}
+<section class="page-section"><div class="shell">
+  <a class="back-link" href="{% url 'round_detail' round.id %}">← До раунду</a>
+  <div class="results-hero"><div class="eyebrow">{% if round.status == 'finished' %}РАУНД ЗАВЕРШЕНО{% else %}ПОТОЧНИЙ РЕЙТИНГ{% endif %}</div><h1>Зал слави <span class="gradient-text">мемів</span></h1><p>Тема: {{ round.topic }}. Автори змагаються за сумарною кількістю голосів.</p></div>
+  {% if authors %}<div class="leaderboard">{% for author in authors %}<article class="leader-row {% if forloop.first %}leader-winner{% endif %}"><span class="leader-place">{% if forloop.first %}🏆{% else %}{{ forloop.counter|stringformat:"02d" }}{% endif %}</span><span class="avatar">{{ author.author__username|slice:":1"|upper }}</span><div class="leader-info"><span class="eyebrow">АВТОР</span><strong>{{ author.author__username }}</strong><small>{{ author.meme_count }} робіт у раунді</small></div><div class="leader-score"><strong>{{ author.total_votes }}</strong><span>голосів</span></div></article>{% endfor %}</div>
+  <h2 class="minor-heading">Найпопулярніші роботи</h2><div class="leaderboard">{% for meme in memes %}<article class="leader-row"><span class="leader-place">{{ forloop.counter|stringformat:"02d" }}</span><img src="{{ meme.image.url }}" alt="{{ meme.caption }}" class="leader-image"><div class="leader-info"><span class="eyebrow">{{ meme.author.username }}</span><strong>{{ meme.caption }}</strong></div><div class="leader-score"><strong>{{ meme.vote_count }}</strong><span>голосів</span></div></article>{% endfor %}</div>
+  {% else %}<div class="empty-state"><h3>Поки немає результатів</h3><p>У цьому раунді ще не опубліковано мемів.</p></div>{% endif %}
+  <div class="center-action"><a class="button" href="{% url 'duels' round.id %}">Переглянути дуелі ↗</a></div>
+</div></section>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ round.topic }} — Meme Arena{% endblock %}
+{% block content %}
+<section class="page-section"><div class="shell">
+  <a class="back-link" href="{% url 'home' %}">← Усі раунди</a>
+  <div class="round-hero"><div><span class="status-pill {% if round.status == 'active' %}status-active{% elif round.status == 'finished' %}status-finished{% else %}status-upcoming{% endif %}">{{ round.get_status_display|upper }}</span><div class="eyebrow round-kicker">ТЕМА РАУНДУ</div><h1>{{ round.topic }}</h1><p>{{ round.description|default:round.title }}</p></div><div class="round-hero-aside"><span>⏱</span><strong>{{ round.ends_at|date:"d.m.Y" }}</strong><small>завершення</small></div></div>
+  <div class="section-heading gallery-heading"><div><div class="eyebrow">АРЕНА МЕМІВ</div><h2>Роботи учасників <span class="count-badge">{{ memes|length }}</span></h2></div><a class="button button-quiet" href="{% url 'results' round.id %}">Результати раунду ↗</a></div>
+  {% if can_submit %}
+  <details class="submit-panel" {% if form.errors %}open{% endif %}><summary><span class="submit-plus">＋</span><span><strong>Додати свій мем</strong><small>Завантаж зображення та придумай підпис</small></span><span class="summary-arrow">↓</span></summary>
+    <form method="post" enctype="multipart/form-data" class="meme-form">{% csrf_token %}
+      {% for field in form %}<div class="form-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}</div>{% endfor %}
+      <button class="button" type="submit">Опублікувати мем ↗</button>
+    </form>
+  </details>
+  {% endif %}
+  {% if memes %}
+  <div class="meme-grid">{% for meme in memes %}<article class="meme-card">
+    <div class="meme-image-wrap"><img src="{{ meme.image.url }}" alt="Мем: {{ meme.caption }}"><span class="meme-rank">#{{ forloop.counter|stringformat:"02d" }}</span></div>
+    <div class="meme-card-body"><p class="meme-caption">{{ meme.caption }}</p><div class="meme-byline"><span class="avatar">{{ meme.author.username|slice:":1"|upper }}</span><span>{{ meme.author.username }}</span><span class="meme-vote-count">♥ {{ meme.vote_count }}</span></div>
+      {% if user.is_authenticated and can_submit %}
+        {% if meme.id in voted_ids %}<button class="button button-voted button-block" disabled>✓ Твій голос зараховано</button>
+        {% elif meme.id in user_meme_ids %}<button class="button button-quiet button-block" disabled>Це твій мем</button>
+        {% else %}<form method="post" action="{% url 'vote' round.id meme.id %}">{% csrf_token %}<button class="button button-block" type="submit">♥ Голосувати</button></form>{% endif %}
+      {% elif not user.is_authenticated and can_submit %}<a class="button button-block" href="{% url 'login' %}">Увійди, щоб голосувати</a>
+      {% endif %}
+    </div>
+  </article>{% endfor %}</div>
+  {% else %}<div class="empty-state"><div class="empty-icon">🖼</div><h3>Тут поки немає мемів</h3><p>{% if can_submit %}Стань першим — завантаж свою роботу!{% else %}Меми з'являться, коли раунд почнеться.{% endif %}</p></div>{% endif %}
+  <div class="duel-cta"><div><span class="eyebrow">ОСОБЛИВИЙ РЕЖИМ</span><h3>Не можеш обрати фаворита?</h3><p>Порівнюй меми віч-на-віч у випадкових парах.</p></div><a class="button" href="{% url 'duels' round.id %}">Мем проти мема ↗</a></div>
+</div></section>
+{% endblock %}

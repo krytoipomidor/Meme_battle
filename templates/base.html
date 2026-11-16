@@ -1,0 +1,45 @@
+{% load static %}
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11121a">
+  <title>{% block title %}Meme Arena{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="{% url 'home' %}"><span class="brand-mark">M</span><span>meme<span class="brand-accent">arena</span></span></a>
+      <nav class="main-nav" aria-label="Головна навігація">
+        <a href="{% url 'home' %}#rounds">Раунди</a>
+        <a href="{% url 'home' %}#about">Як це працює</a>
+      </nav>
+      <div class="header-actions">
+        {% if user.is_authenticated %}
+          <span class="user-greeting">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="button button-quiet button-small" type="submit">Вийти</button></form>
+        {% else %}
+          <a class="button button-quiet button-small" href="{% url 'login' %}">Увійти</a>
+          <a class="button button-small" href="{% url 'signup' %}">Створити акаунт <span aria-hidden="true">↗</span></a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+  <main>
+    {% if messages %}
+      <div class="shell message-stack">
+        {% for message in messages %}<div class="notice notice-{{ message.tags }}">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="shell footer-inner"><a class="brand" href="{% url 'home' %}"><span class="brand-mark">M</span><span>meme<span class="brand-accent">arena</span></span></a><span>Тут перемагає найсмішніший.</span><a href="/admin/">Адмін-панель ↗</a></div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Meme Arena — арена мемів{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="shell hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="live-dot"></span> АРЕНА ВІДКРИТА ДЛЯ ВСІХ</div>
+      <h1>Твій мем.<br>Твоя <span class="gradient-text">перемога.</span></h1>
+      <p class="hero-lead">Тема є. Мем готовий? Заходь на арену, збирай голоси й доведи, що саме твій гумор — топ.</p>
+      <div class="hero-actions"><a class="button button-large" href="#rounds">Знайти свій раунд <span aria-hidden="true">↘</span></a><a class="text-link" href="#about">Як це працює <span aria-hidden="true">→</span></a></div>
+      <div class="hero-stats"><div><strong>01</strong><span>мем за тему</span></div><div><strong>∞</strong><span>приводів сміятись</span></div><div><strong>🏆</strong><span>один переможець</span></div></div>
+    </div>
+    <div class="hero-art" aria-label="Приклад мем-батлу">
+      <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+      <div class="art-note note-top">ТЕМА ТИЖНЯ <span>✦</span></div>
+      <div class="meme-preview preview-back"><div class="preview-emoji">🐸</div><div class="preview-caption">я: ще 5 хвилин<br>також я: <b>2 години потому</b></div></div>
+      <div class="meme-preview preview-front"><div class="preview-topline">#НАСТРІЙ_ПОНЕДІЛКА</div><div class="preview-emoji emoji-main">🫠</div><div class="preview-caption">коли відкрив пошту<br>і згадав, що <b>сьогодні понеділок</b></div><div class="preview-votes">♥ <strong>128</strong><span>голосів</span></div></div>
+      <div class="vs-badge">VS</div><div class="art-note note-bottom"><span>↗</span> ТВОЯ ЧЕРГА!</div>
+    </div>
+  </div>
+</section>
+<section class="section rounds-section" id="rounds">
+  <div class="shell">
+    <div class="section-heading"><div><div class="eyebrow">ВИБИРАЙ СВІЙ БАТЛ</div><h2>Раунди <span class="heading-muted">на арені</span></h2></div><span class="section-note">Нові теми — нові меми. Твій вихід!</span></div>
+    {% if active_rounds %}
+      <div class="round-grid">
+        {% for round in active_rounds %}
+        <article class="round-card active-card">
+          <div class="card-top"><span class="status-pill status-active"><span class="live-dot"></span> ЙДЕ РАУНД</span><span class="round-number">#{{ round.id|stringformat:"02d" }}</span></div>
+          <div class="round-icon">🔥</div><div class="eyebrow">ТЕМА РАУНДУ</div><h3>{{ round.topic }}</h3>
+          {% if round.description %}<p>{{ round.description }}</p>{% else %}<p>{{ round.title }}</p>{% endif %}
+          <div class="round-meta"><span>🖼 {{ round.memes.count }} мемів</span><span>до {{ round.ends_at|date:"d.m" }}</span></div>
+          <a class="button button-block" href="{% url 'round_detail' round.id %}">Відкрити раунд <span>→</span></a>
+          <a class="sub-link" href="{% url 'duels' round.id %}">Мем проти мема ↗</a>
+        </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state"><div class="empty-icon">✦</div><h3>Незабаром буде новий раунд</h3><p>Підготуй найкращий мем — тема вже скоро з'явиться тут.</p></div>
+    {% endif %}
+    {% if upcoming_rounds %}
+    <h3 class="minor-heading">Скоро на арені</h3>
+    <div class="upcoming-list">{% for round in upcoming_rounds %}<a class="upcoming-item" href="{% url 'round_detail' round.id %}"><span class="upcoming-icon">◷</span><span><strong>{{ round.topic }}</strong><small>{{ round.title }} · старт {{ round.starts_at|date:"d.m о H:i" }}</small></span><span class="status-pill status-upcoming">СКОРО</span><span class="arrow">↗</span></a>{% endfor %}</div>
+    {% endif %}
+    {% if finished_rounds %}
+    <h3 class="minor-heading">Минулі раунди</h3>
+    <div class="past-rounds">{% for round in finished_rounds %}<a class="past-item" href="{% url 'results' round.id %}"><span>🏆</span><span><strong>{{ round.topic }}</strong><small>{{ round.title }}</small></span><span class="arrow">Переглянути результати →</span></a>{% endfor %}</div>
+    {% endif %}
+  </div>
+</section>
+<section class="how-section" id="about"><div class="shell"><div class="section-heading"><div><div class="eyebrow">ТРИ КРОКИ ДО СЛАВИ</div><h2>Гра проста.<br><span class="heading-muted">Сміх — безцінний.</span></h2></div></div><div class="steps-grid"><article class="step"><span class="step-num">01</span><span class="step-icon">🎯</span><h3>Обери тему</h3><p>Кожен раунд — нова тема. Шукай натхнення навколо себе.</p></article><article class="step"><span class="step-num">02</span><span class="step-icon">🖼️</span><h3>Запости мем</h3><p>Завантаж картинку, додай підпис і покажи всім свій гумор.</p></article><article class="step"><span class="step-num">03</span><span class="step-icon">🗳️</span><h3>Збирай голоси</h3><p>Голосуй за фаворитів і стеж за результатами батлу.</p></article></div></div></section>
+{% endblock %}
