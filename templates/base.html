@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/meme-theme.css' %}">
 </head>
 <body>
   <header class="site-header">
@@ -21,6 +22,9 @@
       </nav>
       <div class="header-actions">
         {% if user.is_authenticated %}
+          <a class="header-history" href="{% url 'create_round' %}">＋ Раунд</a>
+          <a class="header-history" href="{% url 'profile' %}">Профіль</a>
+          <a class="header-history" href="{% url 'history' %}">Історія</a>
           <span class="user-greeting">{{ user.username }}</span>
           <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="button button-quiet button-small" type="submit">Вийти</button></form>
         {% else %}
@@ -39,7 +43,7 @@
     {% block content %}{% endblock %}
   </main>
   <footer class="site-footer">
-    <div class="shell footer-inner"><a class="brand" href="{% url 'home' %}"><span class="brand-mark">M</span><span>meme<span class="brand-accent">arena</span></span></a><span>Тут перемагає найсмішніший.</span><a href="/admin/">Адмін-панель ↗</a></div>
+    <div class="shell footer-inner"><a class="brand" href="{% url 'home' %}"><span class="brand-mark">M</span><span>meme<span class="brand-accent">arena</span></span></a><span>Тут перемагає найсмішніший.</span>{% if user.is_authenticated and user.is_active and user.is_staff %}<a href="/admin/">Адмін-панель ↗</a>{% endif %}</div>
   </footer>
 </body>
 </html>

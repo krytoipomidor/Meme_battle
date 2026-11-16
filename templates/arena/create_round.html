@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Створити раунд — Meme Arena{% endblock %}
+{% block content %}
+<section class="auth-section create-round-section"><div class="auth-card create-round-card">
+  <a class="back-link" href="{% url 'home' %}#rounds">← До раундів</a>
+  <div class="eyebrow">ТИ ВЕДУЧИЙ АРЕНИ</div>
+  <h1>Створи свій раунд</h1>
+  <p>Придумай тему, запроси учасників і обери час. Раунд з’явиться на сайті одразу та автоматично почнеться за розкладом.</p>
+  <form method="post" class="meme-form round-create-form">{% csrf_token %}
+    {% for field in form %}
+      <div class="form-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.name == "visibility" %}<small>Публічні раунди видно всім. Для приватного раунду можеш запросити друзів або надіслати секретне посилання.</small>{% endif %}
+        {% if field.name == "starts_at" %}<small>Раунд стане активним у цей час.</small>{% endif %}
+        {% if field.name == "ends_at" %}<small>Після завершення раунду нові меми й голоси прийматися не будуть.</small>{% endif %}
+        {% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    {% for error in form.non_field_errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+    <button class="button button-block" type="submit">Опублікувати раунд ↗</button>
+  </form>
+</div></section>
+{% endblock %}

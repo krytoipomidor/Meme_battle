@@ -1,0 +1,299 @@
+:root {
+  --meme-yellow: #f5dc72;
+  --meme-mint: #a4f0cf;
+  --meme-shadow: 0 18px 42px rgba(4, 4, 10, 0.24);
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 4% 13%, rgba(169, 139, 255, 0.09), transparent 27rem),
+    radial-gradient(ellipse at 96% 48%, rgba(255, 119, 189, 0.065), transparent 26rem),
+    var(--bg);
+}
+
+body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-image: radial-gradient(rgba(216, 205, 255, 0.19) 0.8px, transparent 0.8px);
+  background-position: 8px 10px;
+  background-size: 24px 24px;
+  content: "";
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+::selection {
+  background: var(--meme-yellow);
+  color: #17131e;
+}
+
+.site-header {
+  background: rgba(17, 18, 26, 0.94);
+  box-shadow: 0 5px 25px rgba(4, 4, 10, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+.brand-mark {
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  border-radius: 8px 11px 8px 10px;
+  box-shadow: 3px 3px 0 var(--meme-yellow);
+  transform: rotate(-5deg);
+}
+
+.hero {
+  background:
+    radial-gradient(ellipse at 75% 35%, rgba(140, 106, 223, 0.18), transparent 40%),
+    radial-gradient(ellipse at 12% 100%, rgba(255, 119, 189, 0.1), transparent 35%);
+}
+
+.hero h1,
+.round-hero h1,
+.results-hero h1,
+.auth-card h1 {
+  text-wrap: balance;
+}
+
+.hero .gradient-text {
+  background-image: linear-gradient(100deg, var(--meme-yellow) 4%, #ff98c8 48%, #bca6ff 96%);
+}
+
+.hero-art {
+  filter: drop-shadow(0 18px 26px rgba(6, 5, 14, 0.24));
+}
+
+.meme-preview {
+  border: 2px solid rgba(255, 255, 255, 0.83);
+  border-radius: 12px 16px 13px 15px;
+  box-shadow: 6px 7px 0 rgba(245, 220, 114, 0.8), 0 24px 70px #08080d99;
+}
+
+.preview-front {
+  box-shadow: 6px 7px 0 rgba(255, 119, 189, 0.78), 0 24px 70px #08080d99;
+}
+
+.art-note {
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: var(--text);
+  box-shadow: 3px 4px 0 rgba(169, 139, 255, 0.72), 0 8px 26px #0005;
+}
+
+.note-top {
+  background: var(--meme-yellow);
+  color: #17131e;
+}
+
+.note-top span {
+  color: #17131e;
+}
+
+.note-bottom {
+  background: var(--meme-mint);
+  color: #17131e;
+  box-shadow: 3px 4px 0 rgba(255, 119, 189, 0.78), 0 8px 26px #0005;
+}
+
+.note-bottom span {
+  color: #17131e;
+}
+
+.button {
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  box-shadow: 0 4px 0 rgba(13, 11, 19, 0.64);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.button:hover {
+  box-shadow: 0 6px 0 rgba(13, 11, 19, 0.64);
+  transform: translateY(-2px) rotate(-1deg);
+}
+
+.button:active {
+  box-shadow: 0 1px 0 rgba(13, 11, 19, 0.64);
+  transform: translateY(2px);
+}
+
+.button-quiet {
+  border-color: var(--line);
+  box-shadow: 0 3px 0 rgba(5, 5, 12, 0.38);
+}
+
+.button-voted {
+  border-color: rgba(216, 255, 114, 0.4);
+  box-shadow: 0 3px 0 rgba(5, 5, 12, 0.25);
+}
+
+.status-pill {
+  border: 1px solid currentColor;
+}
+
+.round-card,
+.meme-card,
+.duel-card,
+.step,
+.profile-panel,
+.auth-card,
+.submit-panel {
+  box-shadow: var(--meme-shadow);
+}
+
+.round-card {
+  border-radius: 13px 17px 14px 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.round-card:hover {
+  border-color: rgba(245, 220, 114, 0.55);
+  transform: translateY(-4px) rotate(-0.4deg);
+}
+
+.round-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 13px 16px 12px 15px;
+  background: var(--meme-yellow);
+  box-shadow: 3px 4px 0 rgba(255, 119, 189, 0.78);
+  transform: rotate(-5deg);
+}
+
+.round-card:nth-child(3n + 2) .round-icon {
+  background: var(--meme-mint);
+  box-shadow: 3px 4px 0 rgba(169, 139, 255, 0.78);
+  transform: rotate(4deg);
+}
+
+.round-card:nth-child(3n) .round-icon {
+  background: #ff9fca;
+  box-shadow: 3px 4px 0 rgba(245, 220, 114, 0.78);
+  transform: rotate(-3deg);
+}
+
+.round-visibility {
+  margin-top: 10px;
+}
+
+.upcoming-item,
+.past-item,
+.history-item,
+.profile-list-item {
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.upcoming-item:hover,
+.past-item:hover,
+.history-item:hover,
+.profile-list-item:hover {
+  border-color: rgba(245, 220, 114, 0.42);
+  background-color: rgba(245, 220, 114, 0.035);
+  transform: translateX(3px);
+}
+
+.meme-card {
+  border-radius: 12px 16px 13px 15px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.meme-card:hover {
+  border-color: rgba(255, 119, 189, 0.45);
+  transform: translateY(-3px);
+}
+
+.meme-image-wrap img,
+.duel-choice img {
+  background-color: #242331;
+}
+
+.meme-rank {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: var(--meme-yellow);
+  color: #17131e;
+  transform: rotate(-4deg);
+}
+
+.meme-caption {
+  padding: 9px 10px;
+  border-left: 3px solid var(--pink);
+  border-radius: 2px 8px 8px 2px;
+  background: rgba(255, 119, 189, 0.06);
+}
+
+.avatar,
+.profile-avatar {
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 2px 3px 0 rgba(169, 139, 255, 0.72);
+}
+
+.duel-vs,
+.vs-badge {
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: var(--meme-yellow);
+  color: #17131e;
+  box-shadow: 3px 3px 0 rgba(255, 119, 189, 0.76);
+}
+
+.leader-winner {
+  box-shadow: 4px 4px 0 rgba(216, 255, 114, 0.18);
+}
+
+.empty-state {
+  background:
+    radial-gradient(rgba(216, 205, 255, 0.18) 0.8px, transparent 0.8px),
+    rgba(25, 26, 36, 0.52);
+  background-size: 18px 18px;
+}
+
+.step {
+  border-radius: 12px 16px 13px 15px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.step:hover {
+  border-color: rgba(245, 220, 114, 0.4);
+  transform: translateY(-3px) rotate(-0.3deg);
+}
+
+.step-icon {
+  display: inline-block;
+  transform: rotate(-5deg);
+}
+
+.round-hero,
+.duel-cta,
+.profile-hero,
+.invite-panel {
+  box-shadow: var(--meme-shadow);
+}
+
+.round-hero {
+  border-radius: 14px 19px 15px 18px;
+}
+
+.meme-editor {
+  background:
+    radial-gradient(rgba(216, 205, 255, 0.16) 0.8px, transparent 0.8px),
+    #11121a;
+  background-size: 18px 18px;
+}
+
+.history-icon,
+.profile-round-icon {
+  filter: saturate(1.25);
+}
+
+.site-footer {
+  background: rgba(8, 8, 14, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

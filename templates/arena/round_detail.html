@@ -1,15 +1,34 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ round.topic }} — Meme Arena{% endblock %}
 {% block content %}
 <section class="page-section"><div class="shell">
   <a class="back-link" href="{% url 'home' %}">← Усі раунди</a>
   <div class="round-hero"><div><span class="status-pill {% if round.status == 'active' %}status-active{% elif round.status == 'finished' %}status-finished{% else %}status-upcoming{% endif %}">{{ round.get_status_display|upper }}</span><div class="eyebrow round-kicker">ТЕМА РАУНДУ</div><h1>{{ round.topic }}</h1><p>{{ round.description|default:round.title }}</p></div><div class="round-hero-aside"><span>⏱</span><strong>{{ round.ends_at|date:"d.m.Y" }}</strong><small>завершення</small></div></div>
+  {% if round.created_by_id == user.id and round.visibility == 'link' %}<div class="invite-panel"><div><span class="eyebrow">ПРИВАТНИЙ РАУНД</span><strong>Поділись секретним посиланням</strong><small>Хто має посилання, той зможе переглянути раунд і брати участь.</small></div><input id="round-invite-link" type="text" readonly value="{{ request.scheme }}://{{ request.get_host }}{% url 'round_invite' round.access_code %}"><button type="button" class="button button-small" id="copy-round-link">Копіювати</button></div>{% endif %}
+  {% if round.created_by_id == user.id and round.visibility == 'friends' %}<div class="invite-panel"><div><span class="eyebrow">РАУНД ДЛЯ ДРУЗІВ</span><strong>Приватний доступ</strong><small>Раунд бачать лише ти та друзі, чиї запити підтверджено.</small></div><a class="button button-small" href="{% url 'profile' %}">Мої друзі ↗</a></div>{% endif %}
   <div class="section-heading gallery-heading"><div><div class="eyebrow">АРЕНА МЕМІВ</div><h2>Роботи учасників <span class="count-badge">{{ memes|length }}</span></h2></div><a class="button button-quiet" href="{% url 'results' round.id %}">Результати раунду ↗</a></div>
   {% if can_submit %}
   <details class="submit-panel" {% if form.errors %}open{% endif %}><summary><span class="submit-plus">＋</span><span><strong>Додати свій мем</strong><small>Завантаж зображення та придумай підпис</small></span><span class="summary-arrow">↓</span></summary>
-    <form method="post" enctype="multipart/form-data" class="meme-form">{% csrf_token %}
-      {% for field in form %}<div class="form-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}</div>{% endfor %}
-      <button class="button" type="submit">Опублікувати мем ↗</button>
+    <form method="post" enctype="multipart/form-data" class="meme-form" id="meme-editor-form">{% csrf_token %}
+      <div class="form-field"><label for="{{ form.image.id_for_label }}">Зображення</label>{{ form.image }}<small>JPG, PNG або WebP · до 5 МБ</small>{% for error in form.image.errors %}<div class="field-error">{{ error }}</div>{% endfor %}</div>
+      {% for error in form.non_field_errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      <section class="meme-editor" id="meme-editor" aria-label="Редактор тексту на мемі" hidden>
+        <div class="editor-heading"><div><span class="eyebrow">РЕДАКТОР МЕМУ</span><h3>Додай текст і розмісти його на картинці</h3></div><button class="button button-quiet button-small" type="button" id="add-text-block">＋ Додати текст</button></div>
+        <div class="editor-layout">
+          <div class="editor-canvas-shell"><canvas id="meme-canvas" aria-label="Попередній перегляд мему. Перетягни текст, щоб змінити його розташування."></canvas><div class="canvas-hint">Перетягуй текст, щоб змінити його розташування</div></div>
+          <div class="editor-controls">
+            <div class="form-field"><label for="text-block-list">Текстові блоки</label><div class="text-block-list" id="text-block-list"></div></div>
+            <div class="form-field"><label for="text-block-content">Текст</label><textarea id="text-block-content" rows="3" maxlength="160" placeholder="Напиши щось смішне…"></textarea></div>
+            <div class="form-field"><label for="text-block-font">Шрифт</label><select id="text-block-font"><option value="Impact">Impact — мем-класика</option><option value="Arial">Arial</option><option value="Georgia">Georgia</option><option value="Comic Sans MS">Comic Sans</option><option value="Trebuchet MS">Trebuchet</option><option value="Courier New">Courier New</option></select></div>
+            <div class="form-field"><label for="text-block-size">Розмір <output id="text-size-value">56 px</output></label><input id="text-block-size" type="range" min="20" max="112" value="56"></div>
+            <div class="form-field color-field"><label for="text-block-color">Колір тексту</label><input id="text-block-color" type="color" value="#ffffff"></div>
+            <button class="button button-quiet button-small delete-text-button" type="button" id="delete-text-block">Видалити вибраний текст</button>
+          </div>
+        </div>
+      </section>
+      <div class="form-field caption-field"><label for="{{ form.caption.id_for_label }}">Підпис роботи</label>{{ form.caption }}<small>Буде показаний під мемом у стрічці раунду.</small>{% for error in form.caption.errors %}<div class="field-error">{{ error }}</div>{% endfor %}</div>
+      <button class="button" type="submit" id="publish-meme">Опублікувати мем ↗</button>
     </form>
   </details>
   {% endif %}
@@ -28,4 +47,6 @@
   {% else %}<div class="empty-state"><div class="empty-icon">🖼</div><h3>Тут поки немає мемів</h3><p>{% if can_submit %}Стань першим — завантаж свою роботу!{% else %}Меми з'являться, коли раунд почнеться.{% endif %}</p></div>{% endif %}
   <div class="duel-cta"><div><span class="eyebrow">ОСОБЛИВИЙ РЕЖИМ</span><h3>Не можеш обрати фаворита?</h3><p>Порівнюй меми віч-на-віч у випадкових парах.</p></div><a class="button" href="{% url 'duels' round.id %}">Мем проти мема ↗</a></div>
 </div></section>
+<script src="{% static 'js/meme-editor.js' %}" defer></script>
+{% if round.created_by_id == user.id and round.visibility == 'link' %}<script src="{% static 'js/round-invite.js' %}" defer></script>{% endif %}
 {% endblock %}

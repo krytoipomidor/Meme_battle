@@ -21,15 +21,17 @@
 </section>
 <section class="section rounds-section" id="rounds">
   <div class="shell">
-    <div class="section-heading"><div><div class="eyebrow">ВИБИРАЙ СВІЙ БАТЛ</div><h2>Раунди <span class="heading-muted">на арені</span></h2></div><span class="section-note">Нові теми — нові меми. Твій вихід!</span></div>
+    <div class="section-heading"><div><div class="eyebrow">ВИБИРАЙ СВІЙ БАТЛ</div><h2>Раунди <span class="heading-muted">на арені</span></h2></div><div class="round-heading-actions"><span class="section-note">Нові теми — нові меми. Твій вихід!</span>{% if user.is_authenticated %}<a class="button button-small" href="{% url 'create_round' %}">＋ Створити раунд</a>{% else %}<a class="button button-small" href="{% url 'login' %}?next={% url 'create_round' %}">＋ Створити раунд</a>{% endif %}</div></div>
     {% if active_rounds %}
       <div class="round-grid">
         {% for round in active_rounds %}
         <article class="round-card active-card">
           <div class="card-top"><span class="status-pill status-active"><span class="live-dot"></span> ЙДЕ РАУНД</span><span class="round-number">#{{ round.id|stringformat:"02d" }}</span></div>
+          {% if round.visibility != 'public' %}<span class="status-pill status-upcoming round-visibility">{{ round.get_visibility_display|upper }}</span>{% endif %}
           <div class="round-icon">🔥</div><div class="eyebrow">ТЕМА РАУНДУ</div><h3>{{ round.topic }}</h3>
           {% if round.description %}<p>{{ round.description }}</p>{% else %}<p>{{ round.title }}</p>{% endif %}
           <div class="round-meta"><span>🖼 {{ round.memes.count }} мемів</span><span>до {{ round.ends_at|date:"d.m" }}</span></div>
+          {% if round.created_by %}<div class="round-host">Раунд створив(-ла) <strong>{{ round.created_by.username }}</strong></div>{% endif %}
           <a class="button button-block" href="{% url 'round_detail' round.id %}">Відкрити раунд <span>→</span></a>
           <a class="sub-link" href="{% url 'duels' round.id %}">Мем проти мема ↗</a>
         </article>
@@ -40,7 +42,7 @@
     {% endif %}
     {% if upcoming_rounds %}
     <h3 class="minor-heading">Скоро на арені</h3>
-    <div class="upcoming-list">{% for round in upcoming_rounds %}<a class="upcoming-item" href="{% url 'round_detail' round.id %}"><span class="upcoming-icon">◷</span><span><strong>{{ round.topic }}</strong><small>{{ round.title }} · старт {{ round.starts_at|date:"d.m о H:i" }}</small></span><span class="status-pill status-upcoming">СКОРО</span><span class="arrow">↗</span></a>{% endfor %}</div>
+    <div class="upcoming-list">{% for round in upcoming_rounds %}<a class="upcoming-item" href="{% url 'round_detail' round.id %}"><span class="upcoming-icon">◷</span><span><strong>{{ round.topic }}</strong><small>{{ round.title }} · старт {{ round.starts_at|date:"d.m о H:i" }}</small></span>{% if round.visibility != 'public' %}<span class="status-pill status-upcoming">{{ round.get_visibility_display|upper }}</span>{% endif %}<span class="status-pill status-upcoming">СКОРО</span><span class="arrow">↗</span></a>{% endfor %}</div>
     {% endif %}
     {% if finished_rounds %}
     <h3 class="minor-heading">Минулі раунди</h3>

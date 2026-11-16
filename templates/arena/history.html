@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Історія переглядів — Meme Arena{% endblock %}
+{% block content %}
+<section class="page-section"><div class="shell">
+  <a class="back-link" href="{% url 'home' %}">← На головну</a>
+  <div class="results-hero"><div class="eyebrow">ТВІЙ ПРОФІЛЬ</div><h1>Історія <span class="gradient-text">переглядів</span></h1><p>Останні раунди й дуелі, які ти відкривав(-ла).</p></div>
+  {% if entries %}
+    <div class="history-list">
+      {% for entry in entries %}
+      <a class="history-item" href="{{ entry.url }}">
+        <span class="history-icon">{% if entry.kind == "round" %}🎯{% else %}⚔{% endif %}</span>
+        <span class="history-copy"><span class="eyebrow">{% if entry.kind == "round" %}РАУНД{% else %}ДУЕЛЬ · {{ entry.subtitle }}{% endif %}</span><strong>{{ entry.title }}</strong>{% if entry.kind == "round" %}<small>{{ entry.subtitle }}</small>{% endif %}</span>
+        <time datetime="{{ entry.viewed_at|date:'c' }}">{{ entry.viewed_at|date:"d.m.Y · H:i" }}</time>
+        <span class="arrow">↗</span>
+      </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state"><div class="empty-icon">◷</div><h3>Історія поки порожня</h3><p>Переглянуті раунди й дуелі з'являться тут автоматично.</p><a class="button" href="{% url 'home' %}#rounds">Перейти до раундів ↗</a></div>
+  {% endif %}
+</div></section>
+{% endblock %}

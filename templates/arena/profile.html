@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Мій профіль — Meme Arena{% endblock %}
+{% block content %}
+<section class="page-section"><div class="shell">
+  <div class="profile-hero">
+    <span class="profile-avatar">{{ user.username|slice:":1"|upper }}</span>
+    <div><div class="eyebrow">ТВІЙ ПРОФІЛЬ</div><h1>{{ user.username }}</h1><p>Друзі, створені раунди й твої батли — усе в одному місці.</p></div>
+    <a class="button button-quiet" href="{% url 'history' %}">Історія переглядів ↗</a>
+  </div>
+
+  <div class="profile-columns">
+    <section class="profile-panel">
+      <div class="profile-panel-heading"><div><div class="eyebrow">ТВОЄ КОЛО</div><h2>Друзі <span class="count-badge">{{ friends|length }}</span></h2></div></div>
+      <form class="friend-add-form" method="post" action="{% url 'send_friend_request' %}">{% csrf_token %}
+        <label for="{{ friend_form.username.id_for_label }}">Додай друга за ім’ям користувача</label>
+        <div>{{ friend_form.username }}<button class="button button-small" type="submit">Надіслати запит</button></div>
+      </form>
+
+      {% if incoming_requests %}<h3 class="profile-minor-heading">Вхідні запити</h3><div class="profile-list">
+        {% for friend_request in incoming_requests %}<article class="profile-list-item"><span class="avatar">{{ friend_request.sender.username|slice:":1"|upper }}</span><div class="profile-list-copy"><strong>{{ friend_request.sender.username }}</strong><small>хоче додати тебе в друзі</small></div><div class="friend-actions"><form method="post" action="{% url 'accept_friend_request' friend_request.id %}">{% csrf_token %}<button class="button button-small" type="submit">Прийняти</button></form><form method="post" action="{% url 'reject_friend_request' friend_request.id %}">{% csrf_token %}<button class="button button-quiet button-small" type="submit">Відхилити</button></form></div></article>{% endfor %}
+      </div>{% endif %}
+
+      {% if outgoing_requests %}<h3 class="profile-minor-heading">Очікують підтвердження</h3><div class="profile-list">
+        {% for friend_request in outgoing_requests %}<article class="profile-list-item"><span class="avatar">{{ friend_request.recipient.username|slice:":1"|upper }}</span><div class="profile-list-copy"><strong>{{ friend_request.recipient.username }}</strong><small>запит надіслано</small></div></article>{% endfor %}
+      </div>{% endif %}
+
+      {% if friends %}<h3 class="profile-minor-heading">Твої друзі</h3><div class="friend-grid">
+        {% for friend in friends %}<div class="friend-card"><span class="avatar">{{ friend.username|slice:":1"|upper }}</span><strong>{{ friend.username }}</strong></div>{% endfor %}
+      </div>{% else %}<div class="profile-empty">Поки немає друзів. Надішли комусь запит, щоб створювати раунди для свого кола.</div>{% endif %}
+    </section>
+
+    <section class="profile-panel">
+      <div class="eyebrow">ТВОЇ БАТЛИ</div><h2>Створені раунди</h2>
+      {% if created_rounds %}<div class="profile-list">
+        {% for round in created_rounds %}<a class="profile-list-item profile-round-item" href="{% url 'round_detail' round.id %}"><span class="profile-round-icon">🎯</span><div class="profile-list-copy"><strong>{{ round.topic }}</strong><small>{{ round.title }} · {{ round.get_visibility_display }}</small></div><span class="round-status-label status-{{ round.status }}">{{ round.get_status_display }}</span></a>{% endfor %}
+      </div>{% else %}<div class="profile-empty">Ти ще не створював(-ла) раундів.</div>{% endif %}
+
+      <div class="profile-subsection"><div class="eyebrow">ТВОЯ УЧАСТЬ</div><h2>Раунди, де ти грав(-ла)</h2>
+        {% if participated_rounds %}<div class="profile-list">
+          {% for round in participated_rounds %}<a class="profile-list-item profile-round-item" href="{% url 'round_detail' round.id %}"><span class="profile-round-icon">🏆</span><div class="profile-list-copy"><strong>{{ round.topic }}</strong><small>{{ round.title }}{% if round.created_by %} · від {{ round.created_by.username }}{% endif %}</small></div><span class="arrow">↗</span></a>{% endfor %}
+        </div>{% else %}<div class="profile-empty">Твоя участь з’явиться тут, коли ти опублікуєш мем або проголосуєш у раунді.</div>{% endif %}
+      </div>
+    </section>
+  </div>
+</div></section>
+{% endblock %}
